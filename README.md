@@ -90,15 +90,33 @@ The script also prints the 20 most important features according to the model.
 Example output:
 
 ```text
-Sampled observations: ...
-Train observations: ...
-Test observations: ...
-Test default rate: ...
-AUC: ...
-Accuracy Ratio: ...
+Sampled observations: 4646063
+Train observations: 1969796
+Test observations: 1280319
+Test default rate: 0.00936
+AUC: 0.8908
+Accuracy Ratio: 0.7816
 
 Top 20 feature importances:
-...
+hist_max_6m           0.436771
+dq                    0.209807
+hist_max_12m          0.192984
+hist_max_24m          0.030939
+hist_months_30plus    0.028780
+fico                  0.023893
+current_rate          0.010674
+orig_term             0.008476
+dti                   0.008138
+orig_ltv              0.008012
+orig_cltv             0.007876
+orig_rate             0.006371
+orig_upb              0.006340
+current_upb           0.006290
+balance_ratio         0.006030
+hist_months_60plus    0.003835
+age_months            0.003116
+hist_months_90plus    0.001669
+rate_change           0.000000
 ```
 
 ## Notes
