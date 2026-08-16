@@ -1,7 +1,8 @@
 import zipfile
 import numpy as np
 import pandas as pd
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, roc_curve
+import matplotlib.pyplot as plt
 
 ZIP_PATH = r"C:\Users\dylan\mortgage_projects\loan_default_predictor\Performance_All.zip"
 SAMPLE_MOD = 50
@@ -204,6 +205,38 @@ print("Test observations:", len(X_test))
 print("Test default rate:", round(y_test.mean(), 5))
 print("AUC:", round(auc, 4))
 print("Accuracy Ratio:", round(ar, 4))
+
+# ROC curve
+fpr, tpr, thresholds = roc_curve(y_test, probability)
+
+plt.figure(figsize=(8, 6))
+
+plt.plot(
+    fpr,
+    tpr,
+    color="darkblue",
+    linewidth=2,
+    label=f"XGBoost (AUC = {auc:.4f})"
+)
+
+plt.plot(
+    [0, 1],
+    [0, 1],
+    color="gray",
+    linestyle="--",
+    linewidth=1.5,
+    label="Random classifier (AUC = 0.50)"
+)
+
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.title("ROC Curve — 12-Month Mortgage Default Prediction")
+plt.xlim([0, 1])
+plt.ylim([0, 1.05])
+plt.grid(alpha=0.25)
+plt.legend(loc="lower right")
+plt.tight_layout()
+plt.show()
 
 importance = (
     pd.Series(model.feature_importances_, index=X_train.columns)
