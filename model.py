@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.metrics import roc_auc_score
 
 ZIP_PATH = r"C:\Users\dylan\mortgage_projects\loan_default_predictor\Performance_All.zip"
-SAMPLE_MOD = 250
+SAMPLE_MOD = 50
 RANDOM_STATE = 42
 
 with zipfile.ZipFile(ZIP_PATH) as z:
