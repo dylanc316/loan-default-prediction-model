@@ -209,6 +209,14 @@ print("Accuracy Ratio:", round(ar, 4))
 # ROC curve
 fpr, tpr, thresholds = roc_curve(y_test, probability)
 
+ks_values = tpr - fpr
+ks = np.max(ks_values)
+ks_index = np.argmax(ks_values)
+ks_threshold = thresholds[ks_index]
+
+print("KS Statistic:", round(ks, 4))
+print("KS Threshold:", round(ks_threshold, 4))
+
 plt.figure(figsize=(8, 6))
 
 plt.plot(
