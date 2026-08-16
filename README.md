@@ -96,6 +96,8 @@ Test observations: 1280319
 Test default rate: 0.00936
 AUC: 0.8908
 Accuracy Ratio: 0.7816
+KS Statistic: 0.6182
+KS Threshold: 0.0075
 
 Top 20 feature importances:
 hist_max_6m           0.436771
