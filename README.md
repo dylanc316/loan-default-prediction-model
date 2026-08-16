@@ -119,6 +119,8 @@ hist_months_90plus    0.001669
 rate_change           0.000000
 ```
 
+![Screenshot](ROC-curve.png)
+
 ## Notes
 
 This is currently a baseline/research model. The categorical variables and individual monthly history fields are available in the dataset but are commented out of the feature set.
