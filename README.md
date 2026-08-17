@@ -90,38 +90,67 @@ The script also prints the 20 most important features according to the model.
 Example output:
 
 ```text
-Sampled observations: 4646063
-Train observations: 1969796
-Test observations: 1280319
-Test default rate: 0.00936
-AUC: 0.8908
-Accuracy Ratio: 0.7816
-KS Statistic: 0.6182
-KS Threshold: 0.0075
+Sampled observations: 931054
+Train observations: 394472
+Test observations: 256660
+Test default rate: 0.00992
 
-Top 20 feature importances:
-hist_max_6m           0.436771
-dq                    0.209807
-hist_max_12m          0.192984
-hist_max_24m          0.030939
-hist_months_30plus    0.028780
-fico                  0.023893
-current_rate          0.010674
-orig_term             0.008476
-dti                   0.008138
-orig_ltv              0.008012
-orig_cltv             0.007876
-orig_rate             0.006371
-orig_upb              0.006340
-current_upb           0.006290
-balance_ratio         0.006030
-hist_months_60plus    0.003835
-age_months            0.003116
-hist_months_90plus    0.001669
+Logistic regression AUC: 0.8765
+Logistic regression Accuracy Ratio: 0.753
+Logistic regression KS Statistic: 0.6055
+Logistic regression KS Threshold: 0.0092
+
+XGBoost AUC: 0.8775
+XGBoost Accuracy Ratio: 0.7551
+XGBoost KS Statistic: 0.5929
+XGBoost KS Threshold: 0.0084
+
+
+Top 20 feature importances for Logistic regression:
+orig_upb              1.780619
+current_upb          -1.739641
+fico                 -0.697490
+orig_ltv              0.450724
+dti                   0.313088
+hist_months_90plus   -0.246045
+current_rate          0.245307
+hist_max_24m          0.201383
+orig_cltv            -0.187823
+dq                    0.170688
+orig_term             0.127635
+hist_max_12m          0.123093
+orig_rate            -0.097795
+balance_ratio        -0.096957
+hist_months_30plus    0.078250
+hist_max_6m           0.039436
+hist_months_60plus   -0.006484
+age_months           -0.000118
+rate_change           0.000000
+
+
+Top 20 feature importances for XGBoost:
+hist_max_6m           0.268081
+dq                    0.260175
+hist_max_12m          0.158638
+hist_max_24m          0.053047
+hist_months_30plus    0.047658
+fico                  0.028704
+hist_months_60plus    0.024182
+orig_term             0.020407
+current_rate          0.019530
+current_upb           0.016604
+dti                   0.016214
+orig_ltv              0.015684
+orig_cltv             0.015499
+orig_rate             0.015156
+orig_upb              0.014704
+balance_ratio         0.010871
+age_months            0.009901
+hist_months_90plus    0.004944
 rate_change           0.000000
 ```
 
-![Screenshot](ROC-curve.png)
+![Screenshot](Screenshot 2026-08-17 164707.png)
 
 ## Notes
 
