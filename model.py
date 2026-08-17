@@ -2,6 +2,9 @@ import zipfile
 import numpy as np
 import pandas as pd
 from sklearn.metrics import roc_auc_score, roc_curve
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from xgboost import XGBClassifier
 import matplotlib.pyplot as plt
 
 ZIP_PATH = r"C:\Users\dylan\mortgage_projects\loan_default_predictor\Performance_All.zip"
@@ -176,9 +179,50 @@ medians = X_train.median()
 X_train = X_train.fillna(medians)
 X_test = X_test.fillna(medians)
 
-from xgboost import XGBClassifier
+print("\nSampled observations:", len(data))
+print("Train observations:", len(X_train))
+print("Test observations:", len(X_test))
+print("Test default rate:", round(y_test.mean(), 5))
+print("")
 
-model = XGBClassifier(
+
+
+#LOGISTIC REGRESSION
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+logistic_model = LogisticRegression(
+    C=1.0,
+    max_iter=1000,
+    class_weight=None,
+    random_state=RANDOM_STATE
+)
+
+logistic_model.fit(X_train_scaled, y_train)
+
+logistic_probability = logistic_model.predict_proba(X_test_scaled)[:, 1]
+logistic_auc = roc_auc_score(y_test, logistic_probability)
+logistic_ar = 2 * logistic_auc - 1
+
+print("Logistic regression AUC:", round(logistic_auc, 4))
+print("Logistic regression Accuracy Ratio:", round(logistic_ar, 4))
+
+logistic_fpr, logistic_tpr, logistic_thresholds = roc_curve(y_test, logistic_probability)
+
+ks_values = logistic_tpr - logistic_fpr
+ks = np.max(ks_values)
+ks_index = np.argmax(ks_values)
+ks_threshold = logistic_thresholds[ks_index]
+
+print("Logistic regression KS Statistic:", round(ks, 4))
+print("Logistic regression KS Threshold:", round(ks_threshold, 4))
+print("")
+
+
+
+#XGBOOST
+xgb_model = XGBClassifier(
     n_estimators=800,
     max_depth=5,
     learning_rate=0.03,
@@ -193,38 +237,42 @@ model = XGBClassifier(
     n_jobs=-1
 )
 
-model.fit(X_train, y_train)
+xgb_model.fit(X_train, y_train)
 
-probability = model.predict_proba(X_test)[:, 1]
-auc = roc_auc_score(y_test, probability)
-ar = 2 * auc - 1
+xgb_probability = xgb_model.predict_proba(X_test)[:, 1]
+xgb_auc = roc_auc_score(y_test, xgb_probability)
+xgb_ar = 2 * xgb_auc - 1
 
-print("\nSampled observations:", len(data))
-print("Train observations:", len(X_train))
-print("Test observations:", len(X_test))
-print("Test default rate:", round(y_test.mean(), 5))
-print("AUC:", round(auc, 4))
-print("Accuracy Ratio:", round(ar, 4))
+print("XGBoost AUC:", round(xgb_auc, 4))
+print("XGBoost Accuracy Ratio:", round(xgb_ar, 4))
 
-# ROC curve
-fpr, tpr, thresholds = roc_curve(y_test, probability)
+xgb_fpr, xgb_tpr, xgb_thresholds = roc_curve(y_test, xgb_probability)
 
-ks_values = tpr - fpr
+ks_values = xgb_tpr - xgb_fpr
 ks = np.max(ks_values)
 ks_index = np.argmax(ks_values)
-ks_threshold = thresholds[ks_index]
+ks_threshold = xgb_thresholds[ks_index]
 
-print("KS Statistic:", round(ks, 4))
-print("KS Threshold:", round(ks_threshold, 4))
+print("XGBoost KS Statistic:", round(ks, 4))
+print("XGBoost KS Threshold:", round(ks_threshold, 4))
+print("")
 
 plt.figure(figsize=(8, 6))
 
 plt.plot(
-    fpr,
-    tpr,
+    logistic_fpr,
+    logistic_tpr,
+    color="darkgreen",
+    linewidth=2,
+    label=f"Logistic regression (AUC = {logistic_auc:.4f})"
+)
+
+plt.plot(
+    xgb_fpr,
+    xgb_tpr,
     color="darkblue",
     linewidth=2,
-    label=f"XGBoost (AUC = {auc:.4f})"
+    label=f"XGBoost (AUC = {xgb_auc:.4f})"
 )
 
 plt.plot(
@@ -238,7 +286,7 @@ plt.plot(
 
 plt.xlabel("False Positive Rate")
 plt.ylabel("True Positive Rate")
-plt.title("ROC Curve — 12-Month Mortgage Default Prediction")
+plt.title("ROC Curves for 12-Month Mortgage Default Prediction")
 plt.xlim([0, 1])
 plt.ylim([0, 1.05])
 plt.grid(alpha=0.25)
@@ -246,11 +294,21 @@ plt.legend(loc="lower right")
 plt.tight_layout()
 plt.show()
 
-importance = (
-    pd.Series(model.feature_importances_, index=X_train.columns)
+logistic_importance = (
+    pd.Series(logistic_model.coef_[0], index=X_train.columns)
+    .sort_values(key=abs, ascending=False)
+    .head(20)
+)
+
+print("\nTop 20 feature importances for Logistic regression:")
+print(logistic_importance.to_string())
+print("")
+
+xgb_importance = (
+    pd.Series(xgb_model.feature_importances_, index=X_train.columns)
     .sort_values(ascending=False)
     .head(20)
 )
 
-print("\nTop 20 feature importances:")
-print(importance.to_string())
+print("\nTop 20 feature importances for XGBoost:")
+print(xgb_importance.to_string())
