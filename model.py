@@ -8,7 +8,7 @@ from xgboost import XGBClassifier
 import matplotlib.pyplot as plt
 
 ZIP_PATH = r"C:\Users\dylan\mortgage_projects\loan_default_predictor\Performance_All.zip"
-SAMPLE_MOD = 50
+SAMPLE_MOD = 250
 RANDOM_STATE = 42
 
 with zipfile.ZipFile(ZIP_PATH) as z:
